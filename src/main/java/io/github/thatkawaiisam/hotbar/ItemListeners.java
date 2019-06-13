@@ -30,10 +30,6 @@ public class ItemListeners implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
 
-        if (player.getGameMode().equals(GameMode.CREATIVE)) {
-            return;
-        }
-
         for (Hotbar hotbar : hotbarManager.getHotbars()) {
             for (ClickableItem items : hotbar.getClickableItems()) {
                 /* Check that the itemstack is similar */
@@ -76,5 +72,4 @@ public class ItemListeners implements Listener {
         }
     }
 
-    //TODO movement in the inventory, just disable it outright for now.
 }
