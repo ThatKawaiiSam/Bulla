@@ -9,8 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 
@@ -24,14 +26,12 @@ public class ItemListeners implements Listener {
         this.hotbarManager = hotbarManager;
     }
 
-    @EventHandler(
-            priority = EventPriority.MONITOR
-    )
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onItemDrop(PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
 
         for (Hotbar hotbar : hotbarManager.getHotbars()) {
-            for (ClickableItem items : hotbar.getClickableItems()) {
+            for (ClickableItem items : hotbar.getCachedItems().values()) {
                 /* Check that the itemstack is similar */
                 if (items.getItemStack().isSimilar(event.getItemDrop().getItemStack())) {
                     if (items.isDroppable()) {
@@ -44,9 +44,44 @@ public class ItemListeners implements Listener {
         }
     }
 
-    @EventHandler(
-            priority = EventPriority.MONITOR
-    )
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        final Player player = (Player) event.getWhoClicked();
+
+        boolean update = false;
+
+        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+            for (ClickableItem items : hotbar.getCachedItems().values()) {
+                // Current Item
+                if (items.getItemStack().isSimilar(event.getCurrentItem())) {
+                    if (!items.isMoveable()) {
+                        event.setResult(Event.Result.DENY);
+                        event.setCancelled(true);
+                        update = true;
+                    }
+                }
+                // Cursor
+                if (items.getItemStack().isSimilar(event.getCursor())) {
+                    if (!items.isMoveable()) {
+                        event.setResult(Event.Result.DENY);
+                        event.setCancelled(true);
+                        update = true;
+                    }
+                }
+            }
+        }
+
+        if (update) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    player.updateInventory();
+                }
+            }.runTaskLater(hotbarManager.getPlugin(), 2);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onClick(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
 
@@ -57,7 +92,7 @@ public class ItemListeners implements Listener {
         }
 
         for (Hotbar hotbar : hotbarManager.getHotbars()) {
-            for (ClickableItem items : hotbar.getClickableItems()) {
+            for (ClickableItem items : hotbar.getCachedItems().values()) {
                 if (items.getItemStack().isSimilar(player.getItemInHand())) {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
@@ -67,6 +102,7 @@ public class ItemListeners implements Listener {
                         continue;
                     }
                     items.getClickHandler().click(player);
+                    return;
                 }
             }
         }
