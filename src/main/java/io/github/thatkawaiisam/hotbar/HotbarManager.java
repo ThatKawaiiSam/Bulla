@@ -5,13 +5,13 @@ import lombok.Setter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter @Setter
 public class HotbarManager {
 
-    private Set<Hotbar> hotbars = new HashSet<>();
+    private Set<Hotbar> hotbars = ConcurrentHashMap.newKeySet();
 
     private JavaPlugin plugin;
     private ItemListeners listeners;

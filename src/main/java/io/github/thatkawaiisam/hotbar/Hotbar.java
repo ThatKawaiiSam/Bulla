@@ -5,14 +5,14 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter @Setter
-public class Hotbar {
+public abstract class Hotbar {
 
     private String id;
-    private Set<ClickableItem> clickableItems = new HashSet<>();
+    private ConcurrentHashMap<String, ClickableItem> cachedItems = new ConcurrentHashMap<>();
     private HotbarManager manager;
 
     public Hotbar(HotbarManager manager, String id) {
@@ -20,26 +20,47 @@ public class Hotbar {
         this.id = id;
     }
 
-    public void addItem(ClickableItem item) {
-        clickableItems.add(item);
+    public void addCachedItem(String id, ClickableItem item) {
+        cachedItems.put(id, item);
     }
 
-    public void removeItem(ClickableItem item) {
-        clickableItems.remove(item);
+    public void removeCachedItem(String id) {
+        cachedItems.remove(id);
     }
 
-    public void applyToPlayer(Player player) {
+    public ClickableItem getCachedItem(String id) {
+        return cachedItems.get(id);
+    }
+
+    public void applyToPlayer(Player player, ClickableItem item, int slot) {
+        player.getInventory().setItem(slot, null);
+        player.getInventory().setItem(slot, item.getItemStack());
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (ClickableItem item : clickableItems) {
-                    if (item.getApplySlot() < 0) {
-                        continue;
-                    }
-                    player.getInventory().setItem(item.getApplySlot(), item.getItemStack());
-                }
+                player.updateInventory();
             }
-        }.runTaskLater(manager.getPlugin(), 1);
-        player.updateInventory();
+        }.runTaskLater(manager.getPlugin(), 2);
     }
+
+    public void applyToPlayer(Player player, boolean clearHotbar) {
+        if (clearHotbar) {
+            for (int i = 0; i < 8; i++) {
+                player.getInventory().setItem(0, null);
+            }
+        }
+        HashMap<Integer, ClickableItem> itemsToApply = itemsToApply(player);
+        for (Integer slot : itemsToApply.keySet()) {
+            player.getInventory().setItem(slot, itemsToApply.get(slot).getItemStack());
+        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.updateInventory();
+            }
+        }.runTaskLater(manager.getPlugin(), 2);
+    }
+
+    public abstract HashMap<Integer, ClickableItem> itemsToApply(Player player);
+
 }
