@@ -9,8 +9,6 @@ public class ClickableItem {
 
     private ClickHandler clickHandler;
     private ItemStack itemStack;
-    private int applySlot;
-    private boolean droppable;
-    private String id;
+    private boolean droppable, moveable;
 
 }
