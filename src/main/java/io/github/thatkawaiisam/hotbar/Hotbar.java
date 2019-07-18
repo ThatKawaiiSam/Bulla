@@ -3,6 +3,7 @@ package io.github.thatkawaiisam.hotbar;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -13,10 +14,10 @@ public abstract class Hotbar {
 
     private String id;
     private ConcurrentHashMap<String, ClickableItem> cachedItems = new ConcurrentHashMap<>();
-    private HotbarManager manager;
+    private JavaPlugin javaPlugin;
 
-    public Hotbar(HotbarManager manager, String id) {
-        this.manager = manager;
+    public Hotbar(JavaPlugin javaPlugin, String id) {
+        this.javaPlugin = javaPlugin;
         this.id = id;
     }
 
@@ -40,13 +41,13 @@ public abstract class Hotbar {
             public void run() {
                 player.updateInventory();
             }
-        }.runTaskLater(manager.getPlugin(), 2);
+        }.runTaskLater(javaPlugin, 2);
     }
 
     public void applyToPlayer(Player player, boolean clearHotbar) {
         if (clearHotbar) {
             for (int i = 0; i < 8; i++) {
-                player.getInventory().setItem(0, null);
+                player.getInventory().setItem(i, null);
             }
         }
         HashMap<Integer, ClickableItem> itemsToApply = itemsToApply(player);
@@ -58,7 +59,7 @@ public abstract class Hotbar {
             public void run() {
                 player.updateInventory();
             }
-        }.runTaskLater(manager.getPlugin(), 2);
+        }.runTaskLater(javaPlugin, 2);
     }
 
     public abstract HashMap<Integer, ClickableItem> itemsToApply(Player player);
