@@ -1,7 +1,5 @@
 package io.github.thatkawaiisam.hotbar;
 
-import com.google.common.collect.ImmutableSet;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,11 +12,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Set;
-
 public class ItemListeners implements Listener {
-
-    private static Set<Action> actions = ImmutableSet.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
 
     private HotbarManager hotbarManager;
 
@@ -38,7 +32,7 @@ public class ItemListeners implements Listener {
                         continue;
                     }
                     event.setCancelled(true);
-                    player.updateInventory();
+                    delayedUpdateInventory(player);
                 }
             }
         }
@@ -72,12 +66,7 @@ public class ItemListeners implements Listener {
         }
 
         if (update) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    player.updateInventory();
-                }
-            }.runTaskLater(hotbarManager.getPlugin(), 2);
+            delayedUpdateInventory(player);
         }
     }
 
@@ -87,7 +76,8 @@ public class ItemListeners implements Listener {
 
         if (player.getItemInHand() == null
                 || player.getItemInHand().getType() == Material.AIR
-                || !actions.contains(event.getAction())) {
+                || event.getAction() != Action.RIGHT_CLICK_AIR
+                || event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
 
@@ -106,6 +96,15 @@ public class ItemListeners implements Listener {
                 }
             }
         }
+    }
+
+    private void delayedUpdateInventory(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.updateInventory();
+            }
+        }.runTaskLater(hotbarManager.getPlugin(), 2);
     }
 
 }
