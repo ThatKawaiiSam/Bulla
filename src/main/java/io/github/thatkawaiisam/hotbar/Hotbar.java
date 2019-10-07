@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter @Setter
 public abstract class Hotbar {
 
     private String id;
-    private ConcurrentHashMap<String, ClickableItem> cachedItems = new ConcurrentHashMap<>();
+    private Map<String, ClickableItem> cachedItems = new ConcurrentHashMap<>();
     private JavaPlugin javaPlugin;
 
     public Hotbar(JavaPlugin javaPlugin, String id) {
@@ -50,7 +50,7 @@ public abstract class Hotbar {
                 player.getInventory().setItem(i, null);
             }
         }
-        HashMap<Integer, ClickableItem> itemsToApply = itemsToApply(player);
+        Map<Integer, ClickableItem> itemsToApply = itemsToApply(player);
         for (Integer slot : itemsToApply.keySet()) {
             player.getInventory().setItem(slot, itemsToApply.get(slot).getItemStack());
         }
@@ -62,6 +62,6 @@ public abstract class Hotbar {
         }.runTaskLater(javaPlugin, 2);
     }
 
-    public abstract HashMap<Integer, ClickableItem> itemsToApply(Player player);
+    public abstract Map<Integer, ClickableItem> itemsToApply(Player player);
 
 }

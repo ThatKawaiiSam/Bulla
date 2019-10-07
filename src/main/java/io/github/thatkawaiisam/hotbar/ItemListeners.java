@@ -62,6 +62,15 @@ public class ItemListeners implements Listener {
                         update = true;
                     }
                 }
+                // Number
+                if (event.getHotbarButton() != -1
+                        && items.getItemStack().isSimilar(player.getInventory().getItem(event.getHotbarButton()))) {
+                    if (!items.isMoveable()) {
+                        event.setResult(Event.Result.DENY);
+                        event.setCancelled(true);
+                        update = true;
+                    }
+                }
             }
         }
 
@@ -76,8 +85,7 @@ public class ItemListeners implements Listener {
 
         if (player.getItemInHand() == null
                 || player.getItemInHand().getType() == Material.AIR
-                || event.getAction() != Action.RIGHT_CLICK_AIR
-                || event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+                || (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
 
