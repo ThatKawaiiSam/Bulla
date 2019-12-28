@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -76,6 +77,26 @@ public class ItemListeners implements Listener {
 
         if (update) {
             delayedUpdateInventory(player);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        final Player player = event.getPlayer();
+
+        if (player.getItemInHand() == null
+                || player.getItemInHand().getType() == Material.AIR) {
+            return;
+        }
+
+        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+            for (ClickableItem items : hotbar.getCachedItems().values()) {
+                if (items.getItemStack().isSimilar(player.getItemInHand())) {
+                    event.setCancelled(true);
+                    player.updateInventory();
+                    return;
+                }
+            }
         }
     }
 

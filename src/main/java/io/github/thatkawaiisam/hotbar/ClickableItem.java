@@ -9,6 +9,6 @@ public class ClickableItem {
 
     private ClickHandler clickHandler;
     private ItemStack itemStack;
-    private boolean droppable, moveable;
+    private boolean droppable, moveable, placeable;
 
 }
