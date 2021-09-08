@@ -1,4 +1,4 @@
-package io.github.thatkawaiisam.hotbar;
+package io.github.thatkawaiisam.bulla;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
