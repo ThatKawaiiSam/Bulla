@@ -1,4 +1,4 @@
-package io.github.thatkawaiisam.hotbar;
+package io.github.thatkawaiisam.bulla;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,29 +11,33 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class ItemListeners implements Listener {
 
-    private HotbarManager hotbarManager;
+    private final Bulla bulla;
 
-    public ItemListeners(HotbarManager hotbarManager) {
-        this.hotbarManager = hotbarManager;
+    /**
+     * Item Listeners.
+     *
+     * @param bulla instance.
+     */
+    public ItemListeners(Bulla bulla) {
+        this.bulla = bulla;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onItemDrop(PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
 
-        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+        for (Hotbar hotbar : bulla.getHotbars()) {
             for (ClickableItem items : hotbar.getCachedItems().values()) {
-                /* Check that the itemstack is similar */
+                // Check that the ItemStack is similar.
                 if (items.getItemStack().isSimilar(event.getItemDrop().getItemStack())) {
                     if (items.isDroppable()) {
                         continue;
                     }
                     event.setCancelled(true);
-                    delayedUpdateInventory(player);
+                    bulla.delayedUpdateInventory(player);
                 }
             }
         }
@@ -45,9 +49,9 @@ public class ItemListeners implements Listener {
 
         boolean update = false;
 
-        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+        for (Hotbar hotbar : bulla.getHotbars()) {
             for (ClickableItem items : hotbar.getCachedItems().values()) {
-                // Current Item
+                // Current Item.
                 if (items.getItemStack().isSimilar(event.getCurrentItem())) {
                     if (!items.isMoveable()) {
                         event.setResult(Event.Result.DENY);
@@ -55,7 +59,7 @@ public class ItemListeners implements Listener {
                         update = true;
                     }
                 }
-                // Cursor
+                // Cursor.
                 if (items.getItemStack().isSimilar(event.getCursor())) {
                     if (!items.isMoveable()) {
                         event.setResult(Event.Result.DENY);
@@ -63,7 +67,7 @@ public class ItemListeners implements Listener {
                         update = true;
                     }
                 }
-                // Number
+                // Number.
                 if (event.getHotbarButton() != -1
                         && items.getItemStack().isSimilar(player.getInventory().getItem(event.getHotbarButton()))) {
                     if (!items.isMoveable()) {
@@ -76,7 +80,7 @@ public class ItemListeners implements Listener {
         }
 
         if (update) {
-            delayedUpdateInventory(player);
+            bulla.delayedUpdateInventory(player);
         }
     }
 
@@ -89,7 +93,7 @@ public class ItemListeners implements Listener {
             return;
         }
 
-        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+        for (Hotbar hotbar : bulla.getHotbars()) {
             for (ClickableItem items : hotbar.getCachedItems().values()) {
                 if (items.getItemStack().isSimilar(player.getItemInHand())) {
                     event.setCancelled(true);
@@ -110,7 +114,7 @@ public class ItemListeners implements Listener {
             return;
         }
 
-        for (Hotbar hotbar : hotbarManager.getHotbars()) {
+        for (Hotbar hotbar : bulla.getHotbars()) {
             for (ClickableItem items : hotbar.getCachedItems().values()) {
                 if (items.getItemStack().isSimilar(player.getItemInHand())) {
                     event.setCancelled(true);
@@ -125,15 +129,6 @@ public class ItemListeners implements Listener {
                 }
             }
         }
-    }
-
-    private void delayedUpdateInventory(Player player) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.updateInventory();
-            }
-        }.runTaskLater(hotbarManager.getPlugin(), 2);
     }
 
 }

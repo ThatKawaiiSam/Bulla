@@ -5,7 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.thatkawaiisam</groupId>
-    <artifactId>hotbar</artifactId>
+    <artifactId>bulla</artifactId>
+    <name>Bulla</name>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
@@ -35,7 +36,7 @@
     </dependencies>
 
     <build>
-        <finalName>Hotbar-${project.version}-${git.commit.id.abbrev}</finalName>
+        <finalName>Bulla-${project.version}</finalName>
         <defaultGoal>clean install</defaultGoal>
 
         <resources>

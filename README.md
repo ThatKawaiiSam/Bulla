@@ -1,19 +1,16 @@
-# Hotbar
-Simple hotbar utility to make extensive clickable items.
+# Bulla
+> Simple hotbar utility.
 
-### Features
-* Easy to setup.
-* Intuitive to implement.
-* Lightweight.
+---
 
-### Code Examples
-The below code is taken from my ModSuite which utalises the library for the staff items portion.
+## Code Examples
+The below code is taken from a a moderation plugin which utilises the library for the staff items portion.
 ```java
 package io.github.thatkawaiisam.modsuite.modules.staffmode;
 
-import io.github.thatkawaiisam.hotbar.ClickableItem;
-import io.github.thatkawaiisam.hotbar.Hotbar;
-import io.github.thatkawaiisam.hotbar.HotbarManager;
+import io.github.thatkawaiisam.bulla.Bulla;
+import io.github.thatkawaiisam.bulla.ClickableItem;
+import io.github.thatkawaiisam.bulla.Hotbar;
 import io.github.thatkawaiisam.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,8 +19,8 @@ import java.util.HashMap;
 
 public class StaffModeHotbar extends Hotbar {
 
-    public StaffModeHotbar(HotbarManager manager, String id) {
-        super(manager, id);
+    public StaffModeHotbar(Bulla bulla, String id) {
+        super(bulla, id);
         initItems();
     }
 
@@ -38,6 +35,9 @@ public class StaffModeHotbar extends Hotbar {
         return items;
     }
 
+    /**
+     * Add cached items.
+     */
     private void initItems() {
         addCachedItem("compass", new ClickableItem(
                 player -> {
@@ -59,7 +59,7 @@ public class StaffModeHotbar extends Hotbar {
                 player -> {
                     applyToPlayer(player, getCachedItem("appear"), 8);
                 },
-                new ItemBuilder().material(Material.INK_SACK).title("&bDisappear").durability((short)10).build(),
+                new ItemBuilder().material(Material.INK_SACK).title("&bDisappear").durability((short) 10).build(),
                 false,
                 false
         ));
@@ -67,18 +67,26 @@ public class StaffModeHotbar extends Hotbar {
                 player -> {
                     applyToPlayer(player, getCachedItem("disappear"), 8);
                 },
-                new ItemBuilder().material(Material.INK_SACK).title("&bAppear").durability((short)8).build(),
+                new ItemBuilder().material(Material.INK_SACK).title("&bAppear").durability((short) 8).build(),
                 false,
                 false
         ));
     }
 }
-
 ```
 
-### Contact
+---
 
-- MC-Market: https://www.mc-market.org/members/53967/
-- Discord: ThatKawaiiSam#1337
-- Twitter: ThatKawaiiSam
+## Contributing
+When contributing, please create a pull request with the branch named as follows ``<feature/fix>/<title>``.
+
+To compile, run the maven command: ``mvn clean install``
+
+To run unit tests, run the maven command ``mvn test``
+
+---
+
+## Contact
+
+- Discord: ThatKawaiiSam#2882
 - Telegram: ThatKawaiiSam
