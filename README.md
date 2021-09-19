@@ -45,6 +45,7 @@ public class StaffModeHotbar extends Hotbar {
                 },
                 new ItemBuilder().material(Material.COMPASS).title("&bTeleport Compass").build(),
                 false,
+                false,
                 false
         ));
         addCachedItem("onlineStaff", new ClickableItem(
@@ -52,6 +53,7 @@ public class StaffModeHotbar extends Hotbar {
                     // Open online staff
                 },
                 new ItemBuilder().material(Material.SKULL_ITEM).title("&bOnline Staff").build(),
+                false,
                 false,
                 false
         ));
@@ -61,6 +63,7 @@ public class StaffModeHotbar extends Hotbar {
                 },
                 new ItemBuilder().material(Material.INK_SACK).title("&bDisappear").durability((short) 10).build(),
                 false,
+                false,
                 false
         ));
         addCachedItem("appear", new ClickableItem(
@@ -68,6 +71,7 @@ public class StaffModeHotbar extends Hotbar {
                     applyToPlayer(player, getCachedItem("disappear"), 8);
                 },
                 new ItemBuilder().material(Material.INK_SACK).title("&bAppear").durability((short) 8).build(),
+                false,
                 false,
                 false
         ));
